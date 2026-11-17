@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123c3a">
+<title>Bengala Amiga | Aplicativo de apoio</title>
+<style>
+:root{--green:#123c3a;--mint:#dff3ec;--cream:#f7f8f3;--orange:#e9a23b;--ink:#173331;--muted:#5d716d;--white:#fff;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45}
+header{background:var(--green);color:white;padding:22px 18px 26px}header .wrap,main{max-width:850px;margin:auto}
+.brand{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#c7e6dc;font-weight:bold}
+h1{font-size:clamp(29px,6vw,42px);margin:7px 0}header p{margin:0;color:#e1eee9}
+main{padding:18px 14px 40px}.notice{background:#fff5df;border-left:5px solid var(--orange);padding:13px 15px;border-radius:10px;margin-bottom:18px;font-size:15px}
+.tabs{display:flex;gap:8px;overflow:auto;margin:0 0 16px}
+.tab{border:0;border-radius:12px;padding:12px 15px;background:#e5ece8;color:var(--ink);font-weight:bold;font-size:15px;white-space:nowrap;cursor:pointer}
+.tab.active{background:var(--green);color:white}
+.panel{display:none}.panel.active{display:block}
+.card{background:white;border:1px solid #e0e8e3;border-radius:18px;padding:18px;margin:0 0 15px;box-shadow:0 3px 12px #1733310b}
+h2{font-size:23px;margin:0 0 8px}h3{font-size:18px;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:15px}
+label{display:block;font-weight:bold;margin:13px 0 6px}
+input{width:100%;padding:14px;border:2px solid #cbd8d2;border-radius:11px;font-size:17px;background:white;color:var(--ink)}
+button,.action{border:0;border-radius:12px;padding:14px 16px;font-size:17px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.primary{background:var(--green);color:white}.secondary{background:var(--mint);color:var(--green)}.warning{background:#fff0d7;color:#68400b}.danger{background:var(--red);color:white}
+button:focus,input:focus,a:focus{outline:4px solid #f2bd62;outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.actions>*{flex:1 1 180px}
+.status{background:#eef5f1;border-radius:12px;padding:13px;margin-top:12px;color:#254c43}
+.big-direction{font-size:25px;font-weight:bold;text-align:center;padding:24px 12px;background:var(--mint);border-radius:14px;margin:14px 0}
+.contact{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #e0e8e3;border-radius:12px;padding:12px;margin-top:10px}
+.contact small{display:block;color:var(--muted)}.contact button{padding:10px 12px;font-size:15px}
+.emergency-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.emergency-grid a{min-height:75px}.foot{font-size:13px;color:var(--muted);text-align:center;margin-top:20px}
+.hidden{display:none!important}
+@media(max-width:480px){body{font-size:16px}.card{padding:15px}.tab{padding:11px 13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="brand">Projeto de tecnologia assistiva</div>
+<h1>🦯 Bengala Amiga</h1>
+<p>Mais orientação, autonomia e segurança no dia a dia.</p>
+</div></header>
+<main>
+<div class="notice"><strong>Protótipo escolar:</strong> esta demonstração funciona pelo celular, mas ainda não está conectada a uma bengala física. Não substitui uma bengala adequada, acompanhante ou serviço de emergência.</div>
+<nav class="tabs" aria-label="Seções do aplicativo">
+<button class="tab active" data-tab="rota">🧭 Navegação</button>
+<button class="tab" data-tab="contatos">☎️ Contatos</button>
+<button class="tab" data-tab="ajuda">🚨 Emergência</button>
+</nav>
+
+<section class="panel active" id="rota">
+<div class="card">
+<h2>Para onde você quer ir?</h2>
+<p class="sub">Digite um endereço ou local. O mapa será aberto em outro aplicativo.</p>
+<label for="destino">Destino</label>
+<input id="destino" placeholder="Ex.: Praça Central, Americana - SP" autocomplete="street-address">
+<div class="actions">
+<button class="primary" id="ir">📍 Traçar rota</button>
+<button class="secondary" id="localizar">◎ Minha localização</button>
+</div>
+<div class="status" id="gpsStatus" role="status" aria-live="polite">A localização ainda não foi consultada.</div>
+<div class="big-direction" id="instrucao" aria-live="polite">Aguardando um destino</div>
+<div class="actions">
+<button class="secondary" id="falar">🔊 Ouvir orientação</button>
+<button class="secondary" id="pararFala">Parar áudio</button>
+</div>
+</div>
+<div class="card">
+<h3>Como a navegação funciona?</h3>
+<p class="sub">O protótipo usa o GPS do celular para localizar a pessoa e o serviço de mapas para calcular o caminho. As instruções de voz podem ser ouvidas pelo botão.</p>
+</div>
+</section>
+
+<section class="panel" id="contatos">
+<div class="card">
+<h2>Contatos de confiança</h2>
+<p class="sub">Cadastre pessoas que possam ajudar. Os dados ficam salvos somente neste navegador e aparelho.</p>
+<form id="formContato">
+<label for="nome">Nome do contato</label><input id="nome" required maxlength="50" placeholder="Ex.: Filho, cuidador...">
+<label for="telefone">Telefone com DDD</label><input id="telefone" required type="tel" inputmode="tel" placeholder="Ex.: (19) 99999-9999">
+<div class="actions"><button class="primary" type="submit">＋ Adicionar contato</button></div>
+</form>
+<div id="listaContatos" aria-live="polite"></div>
+</div>
+</section>
+
+<section class="panel" id="ajuda">
+<div class="card">
+<h2>Precisa de ajuda?</h2>
+<p class="sub">Use os números oficiais somente quando houver uma emergência real. Ao tocar, o celular abrirá o aplicativo de telefone para confirmar a ligação.</p>
+<div class="emergency-grid">
+<a class="action danger" href="tel:192">🚑 SAMU<br>192</a>
+<a class="action danger" href="tel:193">🚒 Bombeiros<br>193</a>
+<a class="action danger" href="tel:190">🚓 Polícia<br>190</a>
+</div>
+</div>
+<div class="card">
+<h3>Ligar para um contato cadastrado</h3>
+<p class="sub">Escolha um contato na aba “Contatos” e toque em “Ligar”.</p>
+<div id="atalhoContatos" class="sub">Nenhum contato cadastrado.</div>
+</div>
+</section>
+<p class="foot">Bengala Amiga • Projeto demonstrativo de acessibilidade</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));
+ document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===btn.dataset.tab));
+}));
+let coords=null;
+function localizar(){
+ $('gpsStatus').textContent='Solicitando acesso à localização...';
+ if(!navigator.geolocation){$('gpsStatus').textContent='Este navegador não oferece suporte ao GPS.';return;}
+ navigator.geolocation.getCurrentPosition(pos=>{
+  coords={lat:pos.coords.latitude,lon:pos.coords.longitude};
+  $('gpsStatus').textContent=`Localização encontrada. Precisão aproximada: ${Math.round(pos.coords.accuracy)} metros.`;
+  $('instrucao').textContent='Localização atual encontrada.';
+ },err=>{
+  const msgs={1:'Permissão de localização negada. Autorize o acesso nas configurações do navegador.',2:'Não foi possível determinar sua localização.',3:'A localização demorou demais. Tente novamente.'};
+  $('gpsStatus').textContent=msgs[err.code]||'Não foi possível acessar a localização.';
+ },{enableHighAccuracy:true,timeout:12000,maximumAge:10000});
+}
+$('localizar').addEventListener('click',localizar);
+$('ir').addEventListener('click',()=>{
+ const dest=$('destino').value.trim();
+ if(!dest){$('instrucao').textContent='Digite um destino antes de traçar a rota.';$('destino').focus();return;}
+ const url='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dest)+(coords?'&origin='+coords.lat+','+coords.lon:'');
+ $('instrucao').textContent='Rota solicitada. Siga as orientações do mapa e confirme o caminho com atenção.';
+ window.open(url,'_blank','noopener');
+});
+$('falar').addEventListener('click',()=>{
+ if(!('speechSynthesis' in window)){ $('instrucao').textContent='Áudio não disponível neste navegador.';return; }
+ const texto=$('instrucao').textContent;
+ speechSynthesis.cancel(); const fala=new SpeechSynthesisUtterance(texto);
+ fala.lang='pt-BR';fala.rate=0.9;speechSynthesis.speak(fala);
+});
+$('pararFala').addEventListener('click',()=>{if('speechSynthesis' in window)speechSynthesis.cancel();});
+function lerContatos(){try{return JSON.parse(localStorage.getItem('bengalaContatos')||'[]')}catch(e){return []}}
+function salvarContatos(lista){localStorage.setItem('bengalaContatos',JSON.stringify(lista));renderContatos()}
+function telefoneLimpo(t){return t.replace(/\D/g,'')}
+function renderContatos(){
+ const lista=lerContatos();$('listaContatos').innerHTML='';$('atalhoContatos').innerHTML='';
+ if(!lista.length){$('listaContatos').textContent='Nenhum contato cadastrado ainda.';$('atalhoContatos').textContent='Nenhum contato cadastrado.';return;}
+ lista.forEach((c,i)=>{
+  const div=document.createElement('div');div.className='contact';
+  const info=document.createElement('div');info.innerHTML='<strong></strong><small></small>';info.querySelector('strong').textContent=c.nome;info.querySelector('small').textContent=c.telefone;
+  const actions=document.createElement('div');
+  const call=document.createElement('a');call.className='action secondary';call.textContent='Ligar';call.href='tel:'+telefoneLimpo(c.telefone);
+  const del=document.createElement('button');del.className='warning';del.textContent='Excluir';del.addEventListener('click',()=>salvarContatos(lerContatos().filter((_,n)=>n!==i)));
+  actions.append(call,del);div.append(info,actions);$('listaContatos').append(div);
+  const a=document.createElement('p');const link=document.createElement('a');link.href='tel:'+telefoneLimpo(c.telefone);link.textContent='☎️ '+c.nome+' — '+c.telefone;link.className='action secondary';a.append(link);$('atalhoContatos').append(a);
+ });
+}
+$('formContato').addEventListener('submit',e=>{
+ e.preventDefault();const nome=$('nome').value.trim(),telefone=$('telefone').value.trim();
+ if(telefoneLimpo(telefone).length<10){alert('Digite um telefone válido com DDD.');return;}
+ salvarContatos([...lerContatos(),{nome,telefone}]);$('formContato').reset();
+});
+renderContatos();
+</script>
+</body>
+</html>
